@@ -44,19 +44,20 @@ app.post("/data",(request,respond)=>{
 
 //게시글 수
 app.get('/posts/total',(req,res)=>{
-    db.query('select count(*) from posts;', (err,result)=>{
-        res.send(result);
+    db.query('select count(*) cnt from posts;', (err,result)=>{
+        console.log(result[0].cnt)
+        res.send({total : result[0].cnt});
     });
 });
 
 //게시글 목록 10개씩 페이징
 app.get('/posts',(req,res)=>{
-    const page = req.query.page;
+    const page = parseInt(req.query.page);
     const start = (page-1)*10;
 
-    const sql = `select * from posts order by id desc limit ${start}, 10`
+    const sql = `select * from posts order by id desc limit ?, 10;`
     
-    db.query(sql,(err,result)=>{
+    db.query(sql,[start],(err,result)=>{
         res.send(result);
     });
 });
